@@ -4,7 +4,6 @@ using Gurobi, JuMP, LinearAlgebra, TSVD, Dates, MAT
 
 function SPCA_SLS(X, s, z0, lambda, M, env, T_limit, tol)
 
-	T_limit = 10*60
 	main_X = copy(X)
 	n,p = size(X)
 	z = copy(z0)
@@ -109,7 +108,6 @@ function SPCA_SLS(X, s, z0, lambda, M, env, T_limit, tol)
 		z = value.(Z)
 		ETA = value.(eta)
 		gap[counter] = ((ETA-c_min)/c_min)
-		println(-gap[counter])
 		t2 = now()
 		diff_t = Dates.value(convert(Dates.Millisecond, t2-t0))
 		if (diff_t/1000 > T_limit || gap[counter] > -tol)
@@ -122,7 +120,7 @@ function SPCA_SLS(X, s, z0, lambda, M, env, T_limit, tol)
 
 	a,b,c = tsvd(B)
 
-	return a,gap[1:counter-1],B
+	return a[:],-gap[1:counter-1]
 end
 
 
